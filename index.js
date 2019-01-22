@@ -7,22 +7,28 @@ const morgan = require('morgan');
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose.js');
 
+const usersRouter = require('./routes/users.js');
+
 
 const app = express();
 
+// json parser
+app.use(express.json());
+// logging middleware
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
     skip: (req, res) => process.env.NODE_ENV === 'test'
   })
 );
-
+// deals with cors
 app.use(
   cors({
     origin: CLIENT_ORIGIN
   })
 );
 
-app.use(express.json());
+//router mounting
+app.use('/api/users', usersRouter);
 
 
 
