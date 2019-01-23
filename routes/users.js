@@ -14,18 +14,20 @@ router.post('/', requiredFields(expectedFields),
     const { username, password } = req.body;
 
     //*** validation checks here ***
-
-    if (!username) {
-      let err = new Error('Username must not be empty');
-      err.status = 400;
-      err.location = 'username';
-      return next(err);
+    //checks to make user username and password is present
+    if (!username || !password) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'Validation Error',
+        message: 'Required field is missing'
+      });
     }
 
+    //checks to make sure password is between 3 and 72 characters
     if (password.length < 3 || password.length > 72) {
       let err = new Error('password must be between 3 and 73 characters long');
-      err.status = 400;
-      err.location = 'username';
+      err.status = 422;
+      err.location = 'password';
       return next(err);
     }
 
