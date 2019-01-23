@@ -3,9 +3,13 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const passport = require('passport');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose.js');
+
+const localStrategy = require('./passport/localStrategy.js');
+const jwtStrategy = require('./passport/jwt.js');
 
 const usersRouter = require('./routes/users.js');
 
@@ -14,6 +18,7 @@ const app = express();
 
 // json parser
 app.use(express.json());
+
 // logging middleware
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
@@ -26,6 +31,10 @@ app.use(
     origin: CLIENT_ORIGIN
   })
 );
+
+// configures app to use JWT tokens to authenticate users
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 //router mounting
 app.use('/api/users', usersRouter);
